@@ -190,7 +190,7 @@ main( int argc, char *argv[ ] )
 
 	// print the performance:
 
-//#define CSV
+#define CSV
 
 	if( me == THEBOSS )
 	{
