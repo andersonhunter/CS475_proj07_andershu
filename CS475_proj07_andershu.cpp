@@ -62,8 +62,8 @@ main( int argc, char *argv[ ] )
 
 	int  me;		// which one I am
 
-	MPI_Comm_size( MPI_COMM_WORLD, ????? );
-	MPI_Comm_rank( MPI_COMM_WORLD, ????? );
+	MPI_Comm_size( MPI_COMM_WORLD, &NumCpus );
+	MPI_Comm_rank( MPI_COMM_WORLD, &me );
 
 	// decide how much data to send to each processor:
 
@@ -138,13 +138,13 @@ main( int argc, char *argv[ ] )
 		for( int dst = 0; dst < NumCpus; dst++ )
 		{
 			if( dst != THEBOSS )
-				MPI_Send( &BigSignal[dst*PPSize], ?????, ?????, ?????, ?????, MPI_COMM_WORLD );
+				MPI_Send( &BigSignal[dst*PPSize], PPSize, MPI_FLOAT, dst, 'H', MPI_COMM_WORLD );
 		}
 	}
 	else
 	{
 		// have everyone else receive from the THEBOSS:
-		MPI_Recv( PPSignal, ?????, ?????, ?????, ?????, MPI_COMM_WORLD, &status );
+		MPI_Recv( PPSignal, PPSize, MPI_FLOAT, THEBOSS, 'H', MPI_COMM_WORLD, &status );
 	}
 
 	// each processor does its own fourier:
@@ -164,7 +164,7 @@ main( int argc, char *argv[ ] )
 	else
 	{
 		// each processor sends its sums back to the THEBOSS:
-		MPI_Send( ?????, ?????, ?????, ?????, ?????, MPI_COMM_WORLD );
+		MPI_Send( &PPSums, PPSize, MPI_FLOAT, THEBOSS, 'H', MPI_COMM_WORLD );
 	}
 
 	// THEBOSS receives the sums and adds them into the overall sums:
@@ -176,7 +176,7 @@ main( int argc, char *argv[ ] )
 		{
 			if( src != THEBOSS )
 			{
-				MPI_Recv( tmpSums, ?????, ?????, ?????, ?????, MPI_COMM_WORLD, &status );
+				MPI_Recv( tmpSums, PPSize, MPI_FLOAT, src, 'H', MPI_COMM_WORLD, &status );
 
 				for( int p = 0; p < MAXPERIODS; p++ )
 					BigSums[p] += tmpSums[p];
