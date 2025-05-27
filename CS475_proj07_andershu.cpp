@@ -248,5 +248,9 @@ DoOneLocalFourier( int me )
 			PPSums[p] += PPSignal[t] * sinf( omega*(float)element );
 		}
 	}
-
+	if(DEBUG) {
+		for (int i = 0; i < MAXPERIODS; i++) {
+			fprintf(stdout, "Node %3d PPSums[%i] = %10.2f\n", me, i, PPSums[i]);
+		}
+	}
 }
