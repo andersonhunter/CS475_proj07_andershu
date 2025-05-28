@@ -105,6 +105,13 @@ main( int argc, char *argv[ ] )
 		}
 
 		fread( BigSignal, sizeof(float), NUMELEMENTS, fp );
+		for (int i = 0; i < 5; i++) {
+			fprintf(stderr, "BigSignal[%d] = %10.2f\n", i, BigSignal[i]);
+		}
+		for (int i = NUMELEMENTS - 6; i < NUMELEMENTS; i++) {
+			fprintf(stderr, ".........\n");
+			fprintf(stderr, "BigSignal[%d] = %10.2f\n", i, BigSignal[i]);
+		}
 #endif
 	}
 
@@ -145,6 +152,9 @@ main( int argc, char *argv[ ] )
 	{
 		// have everyone else receive from the THEBOSS:
 		MPI_Recv( PPSignal, PPSize, MPI_FLOAT, THEBOSS, 'H', MPI_COMM_WORLD, &status );
+		for(int i = 0; i < PPSize; i++) {
+			fprintf("I'm %d PPSize = %d and I received PPSignal[%d] = %10.2f\n", me, PPSize, i, PPSignal[i]);
+		}
 	}
 
 	// each processor does its own fourier:
@@ -164,6 +174,9 @@ main( int argc, char *argv[ ] )
 	else
 	{
 		// each processor sends its sums back to the THEBOSS:
+		for(int i = 0; i < MAXPERIODS; i++) {
+			fprintf("I'm %d and I'm sending PPSums[%d] = %10.2f back to the boss\n", me, i, PPSums[i]);
+		}
 		MPI_Send( &PPSums, MAXPERIODS, MPI_FLOAT, THEBOSS, 'A', MPI_COMM_WORLD );
 	}
 
@@ -177,9 +190,10 @@ main( int argc, char *argv[ ] )
 			if( src != THEBOSS )
 			{
 				MPI_Recv( tmpSums, MAXPERIODS, MPI_FLOAT, src, 'A', MPI_COMM_WORLD, &status );
-
-				for( int p = 0; p < MAXPERIODS; p++ )
+				for( int p = 0; p < MAXPERIODS; p++ ) {
+					fprintf("I'm %d (sb the boss) and I received %10.2f from %d\n", me, tmpSums[p], src);
 					BigSums[p] += tmpSums[p];
+				}
 			}
 		}
 	}
