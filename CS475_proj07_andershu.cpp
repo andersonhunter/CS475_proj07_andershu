@@ -153,7 +153,7 @@ main( int argc, char *argv[ ] )
 		// have everyone else receive from the THEBOSS:
 		MPI_Recv( PPSignal, PPSize, MPI_FLOAT, THEBOSS, 'H', MPI_COMM_WORLD, &status );
 		for(int i = 0; i < PPSize; i++) {
-			fprintf("I'm %d PPSize = %d and I received PPSignal[%d] = %10.2f\n", me, PPSize, i, PPSignal[i]);
+			fprintf(stderr, "I'm %d PPSize = %d and I received PPSignal[%d] = %10.2f\n", me, PPSize, i, PPSignal[i]);
 		}
 	}
 
@@ -175,7 +175,7 @@ main( int argc, char *argv[ ] )
 	{
 		// each processor sends its sums back to the THEBOSS:
 		for(int i = 0; i < MAXPERIODS; i++) {
-			fprintf("I'm %d and I'm sending PPSums[%d] = %10.2f back to the boss\n", me, i, PPSums[i]);
+			fprintf(stderr, "I'm %d and I'm sending PPSums[%d] = %10.2f back to the boss\n", me, i, PPSums[i]);
 		}
 		MPI_Send( &PPSums, MAXPERIODS, MPI_FLOAT, THEBOSS, 'A', MPI_COMM_WORLD );
 	}
@@ -191,7 +191,7 @@ main( int argc, char *argv[ ] )
 			{
 				MPI_Recv( tmpSums, MAXPERIODS, MPI_FLOAT, src, 'A', MPI_COMM_WORLD, &status );
 				for( int p = 0; p < MAXPERIODS; p++ ) {
-					fprintf("I'm %d (sb the boss) and I received %10.2f from %d\n", me, tmpSums[p], src);
+					fprintf(stderr, "I'm %d (sb the boss) and I received %10.2f from %d\n", me, tmpSums[p], src);
 					BigSums[p] += tmpSums[p];
 				}
 			}
